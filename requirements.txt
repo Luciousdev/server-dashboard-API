@@ -1,0 +1,4 @@
+uptime-kuma-api
+Flask
+python-dotenv
+flask[async]
