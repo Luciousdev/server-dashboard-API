@@ -1,4 +1,3 @@
-import asyncio
 from flask import Flask
 from flask import jsonify, request
 from src.components.uptime_kuma.index import get_all_monitors
