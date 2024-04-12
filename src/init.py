@@ -8,11 +8,11 @@ class StartServer:
     def set_global_variables(self) -> None:
         global base_url
         base_url = "/api/"
-    
+
     def __init__(self) -> None:
         self.app = Flask(__name__)
         self.set_global_variables()
-       
+
     def init_routes(self) -> None:
         @self.app.route(base_url+"/ping", methods=["GET"])
         def ping():
@@ -25,8 +25,8 @@ class StartServer:
                 response = jsonify(kuma_api)
                 response.status_code = 203
                 return response
-            except:
-                response = jsonify({"status": 500, "error": "An error occurred while connecting to Uptime Kuma"})
+            except Exception as e:
+                response = jsonify({"status": 500, "error": f"An error occurred while connecting to Uptime Kuma: {e}"})
                 response.status_code = 500
                 return response
 
@@ -36,7 +36,7 @@ class StartServer:
                 data = await main(request.args.get("type"))
                 response = jsonify({"status": 200, "data": data})
                 return response
-            except:
-                response = jsonify({"status": 500, "error": "An error occurred while connecting to TrueNAS system"})
+            except Exception as e:
+                response = jsonify({"status": 500, "error": f"An error occurred while connecting to TrueNAS system: {e}"})
                 response.status_code = 500
                 return response

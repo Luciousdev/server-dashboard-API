@@ -1,9 +1,9 @@
 import os
 import dotenv
-import csv
 from aiotruenas_client import CachingMachine as TrueNASMachine
 
 
+# Function to be called by the API
 async def main(argument):
     try:
         machine = await TrueNASMachine.create(
@@ -33,7 +33,6 @@ async def get_datasets(machine, isClean):
         dataset_info = []
 
         for dataset in datasets:
-            # isClean equal True, ignore dataset.pool_name == "boot_pool" and ignore dataset.id contain "iocage"
             if isClean:
                 if dataset.pool_name == "boot-pool" or "iocage" in dataset.id:
                     continue
@@ -53,7 +52,7 @@ async def get_datasets(machine, isClean):
 
 
 def format_bytes(bytes_value):
-    # convert
+    # convert bytes to human-readable format
     units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
     index = 0
     while bytes_value >= 1024 and index < len(units) - 1:
@@ -95,25 +94,3 @@ async def get_pools(machine):
     except Exception as e:
         print(f"Error retrieving pools: {str(e)}")
         return []
-
-def datasets2csv(dataset_info, csv_filename):
-    try:
-        with open(csv_filename, mode='w', newline='') as csv_file:
-            fieldnames = ["Pool Name", "Dataset Name", "Total", "Used", "Available"]
-            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-
-            writer.writeheader()
-
-            for item in dataset_info:
-                writer.writerow({
-                    "Pool Name": item["+ Pool Name"],
-                    "Dataset Name": item["+ Dataset Name"],
-                    "Total": item["+ Total"],
-                    "Used": item["+ Used"],
-                    "Available": item["+ Available"]
-                })
-
-        print(f"Dataset information saved to {csv_filename}")
-    except Exception as e:
-        print(f"Error saving to CSV: {str(e)}")
-        exit(1)
