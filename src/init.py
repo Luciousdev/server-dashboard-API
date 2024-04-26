@@ -2,6 +2,7 @@ from flask import Flask
 from flask import jsonify, request
 from src.components.uptime_kuma.index import get_all_monitors
 from src.components.tn_scale.index import main
+from src.components.ping.index import init as ping_init
 
 
 class StartServer:
@@ -38,5 +39,20 @@ class StartServer:
                 return response
             except Exception as e:
                 response = jsonify({"status": 500, "error": f"An error occurred while connecting to TrueNAS system: {e}"})
+                response.status_code = 500
+                return response
+
+        @self.app.route(base_url+"ping-server", methods=["GET"])
+        def ping_server():
+            try:
+                address = request.args.get("address")
+                ptype = request.args.get("type")
+                if not address:
+                    return jsonify({"status": 400, "error": "Address is required"}), 400
+
+                result = ping_init(address, ptype) if ptype else ping_init(address)
+                return jsonify({"status": 200, "message": "Ping request sent", "data": result}), 200
+            except Exception as e:
+                response = jsonify({"status": 500, "error": f"An error occurred while sending ping request: {e}"})
                 response.status_code = 500
                 return response

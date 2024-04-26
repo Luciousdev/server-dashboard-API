@@ -3,3 +3,4 @@ Flask
 python-dotenv
 flask[async]
 aiotruenas-client
+pingparsing
